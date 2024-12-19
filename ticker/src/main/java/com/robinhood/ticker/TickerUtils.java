@@ -32,4 +32,29 @@ public class TickerUtils {
     public static String provideAlphabeticalList() {
         return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
+
+    /**
+     * Finds the index of the first differing character between the current text and the target text.
+     * <p>
+     * If the lengths of the two texts are different, the comparison starts at index 0.
+     * If all characters match, the method returns -1.
+     *
+     * @param origin The current text being displayed.
+     * @param target The target text to compare against.
+     * @return The index of the first differing character, or -1 if the texts are identical.
+     */
+    public static int findFirstDifferenceCharacterIndex(String origin, String target) {
+        if (origin.length() != target.length()) {
+            return 0;
+        }
+
+        int minLength = origin.length();
+        for (int i = 0; i < minLength; i++) {
+            if (origin.charAt(i) != target.charAt(i)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

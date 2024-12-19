@@ -12,6 +12,7 @@
             <enum name="up" value="1" />
             <enum name="down" value="2" />
         </attr>
+        <attr name="ticker_animateUnchangedLowerCharacters" format="reference|boolean" />
 
         <!-- Custom implementations of common android text attributes -->
         <attr name="android:gravity" tools:ignore="ResourceName" />

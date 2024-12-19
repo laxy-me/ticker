@@ -56,6 +56,8 @@ class TickerColumn {
     private float currentBottomDelta;
     private float previousBottomDelta;
     private int directionAdjustment;
+    private boolean animateUnchangedLowerCharacters;
+    private Boolean isIncrement;
 
     TickerColumn(TickerCharacterList[] characterLists, TickerDrawMetrics metrics) {
         this.characterLists = characterLists;
@@ -121,7 +123,8 @@ class TickerColumn {
 
         for (int i = 0; i < characterLists.length; i++) {
             final TickerCharacterList.CharacterIndices indices =
-                    characterLists[i].getCharacterIndices(currentChar, targetChar, metrics.getPreferredScrollingDirection());
+                    characterLists[i].getCharacterIndices(currentChar, targetChar, metrics.getPreferredScrollingDirection(),
+                            animateUnchangedLowerCharacters, isIncrement);
             if (indices != null) {
                 this.currentCharacterList = this.characterLists[i].getCharacterList();
                 this.startIndex = indices.startIndex;
@@ -244,5 +247,13 @@ class TickerColumn {
             return true;
         }
         return false;
+    }
+
+    public void setAnimateUnchangedLowerCharacters(boolean animateUnchangedLowerCharacters) {
+        this.animateUnchangedLowerCharacters = animateUnchangedLowerCharacters;
+    }
+
+    public void setIsIncrement(Boolean isIncrement) {
+        this.isIncrement = isIncrement;
     }
 }

@@ -44,6 +44,20 @@
         app:ticker_animationDuration="500"
         app:ticker_defaultCharacterList="alphabet" />
 
+    <com.robinhood.ticker.TickerView
+        android:id="@+id/ticker4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/activity_vertical_margin"
+        android:textAppearance="@style/TickerTextAppearance"
+        android:textStyle="bold"
+        app:ticker_animationDuration="500"
+        app:ticker_animateUnchangedLowerCharacters="true"
+        app:ticker_animateMeasurementChange="true"
+        app:ticker_defaultCharacterList="number"
+        tools:text="$123.00" />
+
     <Button
         android:id="@+id/perfBtn"
         android:layout_width="match_parent"
