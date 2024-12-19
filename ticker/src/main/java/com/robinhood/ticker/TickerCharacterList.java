@@ -65,9 +65,11 @@ class TickerCharacterList {
      * @param start the character that we want to animate from
      * @param end the character that we want to animate to
      * @param direction the preferred {@Link TickerView#ScrollingDirection}
+     * @param animateUnchangedLowerCharacters the preferred {@Link TickerView#animateUnchangedLowerCharacters}
+     * @param isIncrement the preferred {@Link TickerColumnManager#isIncrement}
      * @return a valid pair of start and end indices, or null if the inputs are not supported.
      */
-    CharacterIndices getCharacterIndices(char start, char end, TickerView.ScrollingDirection direction) {
+    CharacterIndices getCharacterIndices(char start, char end, TickerView.ScrollingDirection direction, boolean animateUnchangedLowerCharacters, Boolean isIncrement) {
         int startIndex = getIndexOfChar(start);
         int endIndex = getIndexOfChar(end);
 
@@ -81,12 +83,20 @@ class TickerCharacterList {
                     endIndex = characterList.length;
                 } else if (endIndex < startIndex) {
                     endIndex += numOriginalCharacters;
+                } else if (endIndex == startIndex) {
+                    if (animateUnchangedLowerCharacters) {
+                        endIndex += numOriginalCharacters;
+                    }
                 }
 
                 break;
             case UP:
                 if (startIndex < endIndex) {
                     startIndex += numOriginalCharacters;
+                } else if (endIndex == startIndex) {
+                    if (animateUnchangedLowerCharacters) {
+                        startIndex += numOriginalCharacters;
+                    }
                 }
 
                 break;
@@ -106,6 +116,14 @@ class TickerCharacterList {
                         final int wrapDistance = numOriginalCharacters - endIndex + startIndex;
                         if (wrapDistance < nonWrapDistance) {
                             startIndex += numOriginalCharacters;
+                        }
+                    } else if (animateUnchangedLowerCharacters) {
+                        if (isIncrement != null) {
+                            if (isIncrement) {
+                                endIndex += numOriginalCharacters;
+                            } else {
+                                startIndex += numOriginalCharacters;
+                            }
                         }
                     }
                 }

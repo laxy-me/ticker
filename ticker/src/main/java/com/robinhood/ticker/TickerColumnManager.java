@@ -39,6 +39,9 @@ class TickerColumnManager {
 
     private TickerCharacterList[] characterLists;
     private Set<Character> supportedCharacters;
+    private boolean animateUnchangedLowerCharacters;
+    private int startChangeIndex;
+    private Boolean isIncrement;
 
     TickerColumnManager(TickerDrawMetrics metrics) {
         this.metrics = metrics;
@@ -92,18 +95,45 @@ class TickerColumnManager {
         );
         int columnIndex = 0;
         int textIndex = 0;
+        TickerColumn tickerColumn;
         for (int i = 0; i < actions.length; i++) {
             switch (actions[i]) {
                 case LevenshteinUtils.ACTION_INSERT:
-                    tickerColumns.add(columnIndex,
-                            new TickerColumn(characterLists, metrics));
+                    tickerColumn = new TickerColumn(characterLists, metrics);
+                    if (i >= startChangeIndex) {
+                        tickerColumn.setAnimateUnchangedLowerCharacters(animateUnchangedLowerCharacters);
+                        if (animateUnchangedLowerCharacters) {
+                            tickerColumn.setIsIncrement(isIncrement);
+                        }
+                    } else {
+                        tickerColumn.setAnimateUnchangedLowerCharacters(false);
+                    }
+                    tickerColumns.add(columnIndex, tickerColumn);
                     // Intentional fallthrough
                 case LevenshteinUtils.ACTION_SAME:
-                    tickerColumns.get(columnIndex).setTargetChar(text[textIndex]);
+                    tickerColumn = tickerColumns.get(columnIndex);
+                    if (i >= startChangeIndex) {
+                        tickerColumn.setAnimateUnchangedLowerCharacters(animateUnchangedLowerCharacters);
+                        if (animateUnchangedLowerCharacters) {
+                            tickerColumn.setIsIncrement(isIncrement);
+                        }
+                    } else {
+                        tickerColumn.setAnimateUnchangedLowerCharacters(false);
+                    }
+                    tickerColumn.setTargetChar(text[textIndex]);
                     columnIndex++;
                     textIndex++;
                     break;
                 case LevenshteinUtils.ACTION_DELETE:
+                    tickerColumn = tickerColumns.get(columnIndex);
+                    if (i >= startChangeIndex) {
+                        tickerColumn.setAnimateUnchangedLowerCharacters(animateUnchangedLowerCharacters);
+                        if (animateUnchangedLowerCharacters) {
+                            tickerColumn.setIsIncrement(isIncrement);
+                        }
+                    } else {
+                        tickerColumn.setAnimateUnchangedLowerCharacters(false);
+                    }
                     tickerColumns.get(columnIndex).setTargetChar(TickerUtils.EMPTY_CHAR);
                     columnIndex++;
                     break;
@@ -163,5 +193,61 @@ class TickerColumnManager {
             column.draw(canvas, textPaint);
             canvas.translate(column.getCurrentWidth(), 0f);
         }
+    }
+
+    /**
+     * Sets whether unchanged lower characters will animate when higher positions change.
+     *
+     * @param animateUnchangedLowerCharacters {@code true} to animate unchanged lower characters; {@code false} otherwise.
+     */
+    public void setAnimateUnchangedLowerCharacters(boolean animateUnchangedLowerCharacters) {
+        this.animateUnchangedLowerCharacters = animateUnchangedLowerCharacters;
+    }
+
+    /**
+     * Returns whether unchanged lower characters will animate when higher positions change.
+     *
+     * @return {@code true} if unchanged lower characters are animated; {@code false} otherwise.
+     */
+    public boolean getAnimateUnchangedLowerCharacters() {
+        return animateUnchangedLowerCharacters;
+    }
+
+    /**
+     * Sets the starting index for character changes.
+     *
+     * @param startChangeIndex The index at which the character change begins.
+     */
+    public void setStartChangeIndex(int startChangeIndex) {
+        this.startChangeIndex = startChangeIndex;
+    }
+
+    /**
+     * Returns the starting index for character changes.
+     *
+     * @return The index at which the character change begins.
+     */
+    public int getStartChangeIndex() {
+        return startChangeIndex;
+    }
+
+    /**
+     * Sets whether the text change represents an increment (e.g., increasing value).
+     *
+     * @param isIncrement {@code true} if the text change is an increment; {@code false} otherwise.
+     *                    Can be {@code null} if the increment state is unknown.
+     */
+    public void setIsIncrement(Boolean isIncrement) {
+        this.isIncrement = isIncrement;
+    }
+
+    /**
+     * Returns whether the text change represents an increment.
+     *
+     * @return {@code true} if the text change is an increment; {@code false} if it is a decrement;
+     *         {@code null} if the increment state is unknown.
+     */
+    public Boolean getIsIncrement() {
+        return isIncrement;
     }
 }

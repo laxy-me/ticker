@@ -97,6 +97,7 @@ public class TickerView extends View {
     private boolean animateMeasurementChange;
     // pending text set from XML because we didn't have a character list initially
     private String pendingTextToSet;
+    private boolean animateUnchangedLowerCharacters;
 
     public TickerView(Context context) {
         super(context);
@@ -159,6 +160,8 @@ public class TickerView extends View {
                 R.styleable.TickerView_ticker_animationDuration, DEFAULT_ANIMATION_DURATION);
         this.animateMeasurementChange = arr.getBoolean(
                 R.styleable.TickerView_ticker_animateMeasurementChange, false);
+        this.animateUnchangedLowerCharacters = arr.getBoolean(
+                R.styleable.TickerView_ticker_animateUnchangedLowerCharacters, false);
         this.gravity = styledAttributes.gravity;
 
         if (styledAttributes.shadowColor != 0) {
@@ -602,6 +605,28 @@ public class TickerView extends View {
         }
     }
 
+    /**
+     * Enables or disables the animation of unchanged lower characters when higher positions change.
+     * <p>
+     * When enabled, if the text changes (e.g., from "abcd" to "abed"), all characters at lower positions
+     * (e.g., "cd" -> "ed") will animate, even if some characters remain unchanged.
+     * <p>
+     * By default, this feature is disabled.
+     *
+     * @param animateUnchangedLowerCharacters {@code true} to animate unchanged lower characters; {@code false} otherwise.
+     */
+    public void setAnimateUnchangedLowerCharacters(boolean animateUnchangedLowerCharacters) {
+        this.animateUnchangedLowerCharacters = animateUnchangedLowerCharacters;
+    }
+
+    /**
+     * Returns whether unchanged lower characters will animate when higher positions change.
+     *
+     * @return {@code true} if unchanged lower characters are animated; {@code false} otherwise.
+     */
+    public boolean getAnimateUnchangedLowerCharacters() {
+        return animateUnchangedLowerCharacters;
+    }
 
     /********** END PUBLIC API **********/
 
@@ -710,11 +735,31 @@ public class TickerView extends View {
     }
 
     private void setTextInternal(String text) {
+        columnManager.setAnimateUnchangedLowerCharacters(animateUnchangedLowerCharacters);
+        if (animateUnchangedLowerCharacters) {
+            updateAnimationForTextChange(text);
+        }
         this.text = text;
         final char[] targetText = text == null ? new char[0] : text.toCharArray();
 
         columnManager.setText(targetText);
         setContentDescription(text);
+    }
+
+    private void updateAnimationForTextChange(String newText) {
+        Boolean isIncrement = null;
+
+        if (this.text != null) {
+            isIncrement = this.text.compareTo(newText) < 0;
+
+            int startChangeIndex = TickerUtils.findFirstDifferenceCharacterIndex(this.text, newText);
+            if (startChangeIndex != -1) {
+                columnManager.setStartChangeIndex(startChangeIndex);
+            }
+
+        }
+
+        columnManager.setIsIncrement(isIncrement);
     }
 
     private void startNextAnimation() {

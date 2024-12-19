@@ -11,7 +11,7 @@ import java.util.Random;
 public class MainActivity extends BaseActivity {
     private final String alphabetlist = "abcdefghijklmnopqrstuvwxyz";
 
-    private TickerView ticker1, ticker2, ticker3;
+    private TickerView ticker1, ticker2, ticker3, ticker4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +21,7 @@ public class MainActivity extends BaseActivity {
         ticker1 = findViewById(R.id.ticker1);
         ticker2 = findViewById(R.id.ticker2);
         ticker3 = findViewById(R.id.ticker3);
+        ticker4 = findViewById(R.id.ticker4);
 
         ticker1.setPreferredScrollingDirection(TickerView.ScrollingDirection.DOWN);
         ticker2.setPreferredScrollingDirection(TickerView.ScrollingDirection.UP);
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity {
         final String currencyFloat = Float.toString(RANDOM.nextFloat() * 100);
         ticker2.setText("$" + currencyFloat.substring(0, Math.min(digits, currencyFloat.length())));
         ticker3.setText(generateChars(RANDOM, alphabetlist, digits));
+        setTicker4(ticker4, "$" + RANDOM.nextInt(10000) + ".00");
     }
 
     private String generateChars(Random random, String list, int numDigits) {
@@ -57,5 +59,19 @@ public class MainActivity extends BaseActivity {
             result[i] = list.charAt(random.nextInt(list.length()));
         }
         return new String(result);
+    }
+
+    private static void setTicker4(TickerView tickerView, String number) {
+        String text = tickerView.getText();
+        if (text == null) {
+            tickerView.setText(number);
+            return;
+        }
+        if (text.compareTo(number) < 0) {
+            tickerView.setPreferredScrollingDirection(TickerView.ScrollingDirection.DOWN);
+        } else {
+            tickerView.setPreferredScrollingDirection(TickerView.ScrollingDirection.UP);
+        }
+        tickerView.setText(number);
     }
 }
