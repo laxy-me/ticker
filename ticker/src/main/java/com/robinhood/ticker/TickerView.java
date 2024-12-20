@@ -281,6 +281,10 @@ public class TickerView extends View {
         }
     }
 
+    @Override
+    public int getBaseline() {
+        return (int) metrics.getCharBaseline();
+    }
 
     /********** BEGIN PUBLIC API **********/
 
