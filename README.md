@@ -1,4 +1,17 @@
+[![](https://jitpack.io/v/theplant/ticker.svg)](https://jitpack.io/#theplant/ticker)
+
 ![](https://github.com/robinhood/ticker/blob/master/assets/ticker_main.gif)
+
+## License
+This project is based on the original work of Robinhood Markets, Inc.,
+licensed under the Apache License, Version 2.0.
+
+### Modifications
+The following changes have been made by The Plant:
+- 2024-12-19: Support animate unchanged lower characters.
+- 2024-12-20: Support baseline alignment.
+
+For the original project, see [https://github.com/robinhood/ticker].
 
 Migrating to version 2
 ======================
@@ -21,14 +34,21 @@ a starting character to a target character. For example, if you just use a basic
 list, when animating from 'A' to 'Z', it will go from 'A' -> 'B' -> ... 'Z'. We will perform
 wrap-around animation when it's faster (e.g. 'Z' to 'A' will just animate 'Z' -> 'A').
 
-
 Getting started
 ---------------
 
-Add the ticker dependency to your `build.gradle`.
+Step 1. Add the JitPack repository to your root `build.gradle`.
+
+```groove
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+
+Step 2. Add the ticker dependency to your `build.gradle`.
 
 ```groovy
-implementation 'com.robinhood.ticker:ticker:2.0.4'
+implementation 'com.github.theplant:ticker:Tag'
 ```
 
 
@@ -69,6 +89,7 @@ android:textColor="@color/colorPrimary"
 android:textSize="16sp"
 app:ticker_animationDuration="1500"
 app:ticker_preferredScrollingDirection="any"
+app:ticker_animateUnchangedLowerCharacters="true"
 ```
 
 Or Java:
@@ -81,6 +102,7 @@ tickerView.setAnimationDuration(500);
 tickerView.setAnimationInterpolator(new OvershootInterpolator());
 tickerView.setGravity(Gravity.START);
 tickerView.setPreferredScrollingDirection(TickerView.ScrollingDirection.ANY);
+tickerView.setAnimateUnchangedLowerCharacters(true);
 ```
 
 For the full list of XML attributes that we support, please refer to the 
@@ -103,13 +125,13 @@ License
 =======
 
     Copyright 2016 Robinhood Markets, Inc.
-
+    
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-
+    
        http://www.apache.org/licenses/LICENSE-2.0
-
+    
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
